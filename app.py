@@ -162,12 +162,19 @@ st.markdown("""
 logo_path = os.path.join(current_dir, "Alburhaniya logo.jpg")
 try:
     if os.path.exists(logo_path):
+        # Debug information
+        st.write(f"Logo path: {logo_path}")
+        st.write(f"File exists: {os.path.exists(logo_path)}")
+        st.write(f"File size: {os.path.getsize(logo_path)} bytes")
+        
+        # Load and display logo
         logo = Image.open(logo_path)
-        # Center the logo
+        # Center the logo using columns
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
-            st.image(logo, width=200)
+            st.image(logo, width=300, use_column_width='auto')
     else:
+        st.warning("Logo file not found. Using fallback title.")
         # Create a centered title with emoji when logo is missing
         st.markdown("""
             <div style='text-align: center'>
