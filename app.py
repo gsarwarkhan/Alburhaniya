@@ -174,7 +174,7 @@ if "logged_in" in st.session_state and st.session_state["logged_in"]:
     if st.sidebar.button("Logout"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
-        st.experimental_rerun()
+        st.rerun()
     st.sidebar.success(f"Welcome, {st.session_state['username']}!")
 else:
     # Toggle between login and signup
@@ -218,7 +218,7 @@ else:
                     st.session_state["logged_in"] = True
                     st.session_state["username"] = username
                     st.session_state["is_admin"] = bool(result[1])
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.sidebar.error("Invalid username or password.")
 
