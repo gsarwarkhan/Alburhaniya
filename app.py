@@ -263,9 +263,53 @@ if "logged_in" in st.session_state and st.session_state["logged_in"]:
         # Show user's own activity
         st.subheader("📊 Your Activity History")
         try:
-            df_user = pd.read_sql_query(f"SELECT * FROM activities WHERE username='{st.session_state['username']}'", conn)
+            # Use parameterized query to prevent SQL injection
+            df_user = pd.read_sql_query(
+                "SELECT * FROM activities WHERE username = ? ORDER BY date DESC",
+                conn,
+                params=(st.session_state['username'],)
+            )
             if not df_user.empty:
-                st.dataframe(df_user)
+                # Format the date column
+                df_user['date'] = pd.to_datetime(df_user['date']).dt.strftime('%Y-%m-%d %H:%M:%S')
+                # Format the boolean column
+                df_user['salah_completed'] = df_user['salah_completed'].map({True: 'Yes', False: 'No'})
+                # Display the dataframe with better formatting
+                st.dataframe(
+                    df_user,
+                    column_config={
+                        "date": st.column_config.DatetimeColumn(
+                            "Date",
+                            format="YYYY-MM-DD HH:mm:ss"
+                        ),
+                        "salah_completed": st.column_config.TextColumn(
+                            "Salah Completed",
+                            help="Whether all Salah prayers were completed"
+                        ),
+                        "al_asaas_count": st.column_config.NumberColumn(
+                            "Al-Asaas Count",
+                            help="Number of Al-Asaas recitations"
+                        ),
+                        "marboota_shareef_count": st.column_config.NumberColumn(
+                            "Marboota Shareef Count",
+                            help="Number of Marboota Shareef recitations"
+                        ),
+                        "fatiha_count": st.column_config.NumberColumn(
+                            "Fatiha Count",
+                            help="Number of Fatiha recitations"
+                        ),
+                        "zikr_mufrith_count": st.column_config.NumberColumn(
+                            "Zikr e Mufrith Count",
+                            help="Number of Zikr e Mufrith recitations"
+                        ),
+                        "notes": st.column_config.TextColumn(
+                            "Notes",
+                            help="Additional notes about the activities"
+                        )
+                    },
+                    hide_index=True,
+                    use_container_width=True
+                )
             else:
                 st.info("No activity data available yet. Start logging your activities!")
         except Exception as e:
@@ -303,9 +347,48 @@ if "logged_in" in st.session_state and st.session_state["logged_in"]:
         # Activity Dashboard
         st.subheader("📊 All Users Activity")
         try:
-            df = pd.read_sql_query("SELECT * FROM activities", conn)
+            df = pd.read_sql_query("SELECT * FROM activities ORDER BY date DESC", conn)
             if not df.empty:
-                st.dataframe(df)
+                # Format the date column
+                df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d %H:%M:%S')
+                # Format the boolean column
+                df['salah_completed'] = df['salah_completed'].map({True: 'Yes', False: 'No'})
+                # Display the dataframe with better formatting
+                st.dataframe(
+                    df,
+                    column_config={
+                        "date": st.column_config.DatetimeColumn(
+                            "Date",
+                            format="YYYY-MM-DD HH:mm:ss"
+                        ),
+                        "salah_completed": st.column_config.TextColumn(
+                            "Salah Completed",
+                            help="Whether all Salah prayers were completed"
+                        ),
+                        "al_asaas_count": st.column_config.NumberColumn(
+                            "Al-Asaas Count",
+                            help="Number of Al-Asaas recitations"
+                        ),
+                        "marboota_shareef_count": st.column_config.NumberColumn(
+                            "Marboota Shareef Count",
+                            help="Number of Marboota Shareef recitations"
+                        ),
+                        "fatiha_count": st.column_config.NumberColumn(
+                            "Fatiha Count",
+                            help="Number of Fatiha recitations"
+                        ),
+                        "zikr_mufrith_count": st.column_config.NumberColumn(
+                            "Zikr e Mufrith Count",
+                            help="Number of Zikr e Mufrith recitations"
+                        ),
+                        "notes": st.column_config.TextColumn(
+                            "Notes",
+                            help="Additional notes about the activities"
+                        )
+                    },
+                    hide_index=True,
+                    use_container_width=True
+                )
             else:
                 st.info("No activity data available yet.")
         except Exception as e:
