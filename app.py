@@ -160,11 +160,28 @@ st.markdown("""
 
 # Load and display logo with absolute path
 logo_path = os.path.join(current_dir, "Alburhaniya logo.jpg")
-if os.path.exists(logo_path):
-    logo = Image.open(logo_path)
-    st.image(logo, width=200)
-else:
-    st.title("📿 Spiritual Activity Tracker")
+try:
+    if os.path.exists(logo_path):
+        logo = Image.open(logo_path)
+        # Center the logo
+        col1, col2, col3 = st.columns([1,2,1])
+        with col2:
+            st.image(logo, width=200)
+    else:
+        # Create a centered title with emoji when logo is missing
+        st.markdown("""
+            <div style='text-align: center'>
+                <h1>📿 Alburhaniya Spiritual Tracker</h1>
+            </div>
+        """, unsafe_allow_html=True)
+except Exception as e:
+    st.error(f"Error loading logo: {str(e)}")
+    # Fallback to centered title
+    st.markdown("""
+        <div style='text-align: center'>
+            <h1>📿 Alburhaniya Spiritual Tracker</h1>
+        </div>
+    """, unsafe_allow_html=True)
 
 # Sidebar login/signup
 st.sidebar.title("🔐 Authentication")
